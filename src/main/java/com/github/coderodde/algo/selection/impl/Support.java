@@ -17,7 +17,7 @@ public final class Support {
      * @param pivot the pivot value.
      * @return the number of array elements no larger than the pivot.
      */
-    public static <E extends Comparable<? super E>> int partition(E[] array,
+    static <E extends Comparable<? super E>> int partition(E[] array,
                                                                   E pivot) {
         int i = -1;
         
@@ -31,9 +31,21 @@ public final class Support {
         return i + 1;
     }
     
-    public static <E> void swap(E[] array, int index1, int index2) {
+    static <E> void swap(E[] array, int index1, int index2) {
         E tmp = array[index1];
         array[index1] = array[index2];
         array[index2] = tmp;
+    }
+    
+    static void checkK(int arrayLength, int k) {
+        if (k < 0) {
+            throw new IllegalArgumentException("'k' is negative: " + k);
+        }
+        
+        if (k >= arrayLength) {
+            throw new IllegalArgumentException(
+                    "'k' is too large: " + k + 
+                    "Must be at most " + (arrayLength - 1) + ".");
+        }
     }
 }

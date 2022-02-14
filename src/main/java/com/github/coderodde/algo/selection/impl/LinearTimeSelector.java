@@ -1,6 +1,7 @@
 package com.github.coderodde.algo.selection.impl;
 
 import com.github.coderodde.algo.selection.Selector;
+import static com.github.coderodde.algo.selection.impl.Support.checkK;
 import static com.github.coderodde.algo.selection.impl.Support.partition;
 import java.util.Arrays;
 import java.util.Objects;
@@ -25,47 +26,51 @@ implements Selector<E> {
         }
         
         checkK(array.length, k);
-        return selectImpl(array, k)[0];
+        return selectImpl(array, k, 0, array.length);
     }
     
-    private static <E extends Comparable<? super E>> E[] 
-        selectImpl(E[] array, int i) {
+    private static <E extends Comparable<? super E>> E 
+        selectImpl(E[] array, int i, int fromIndex, int toIndex) {
            
         if (array.length == 1) {
-            return Arrays.copyOfRange(array, 0, 1);
+            return array[0];
         }
         
-        E[] medians = getGroupMedians(array);
-        E x = selectImpl(medians, i)[0];
+        E[] medians = getGroupMedians(array, 
+                                      fromIndex,
+                                      toIndex);
+        
+        E x = selectImpl(medians, 
+                         i,
+                         fromIndex, 
+                         toIndex);
+        
         int k = partition(array, x);
         
         if (i == k) {
-            E[] returnArray = Arrays.copyOfRange(array, 0, 1);
-            returnArray[0] = x;
-            return returnArray;
+            return x;
         }
         
-        return i < k ? selectImpl(medians, i) : 
-                       selectImpl(medians, i - k);
+        return i < k ? selectImpl(array, i, fromIndex, fromIndex + k) : 
+                       selectImpl(array, i - k, toIndex - k, toIndex);
     }
     
     
     private static <E extends Comparable<? super E>>
-        E[] getGroupMedians(E[] array) {
+        E[] getGroupMedians(E[] array, int fromIndex, int toIndex) {
             
-        int arrayLength = array.length;
+        int arrayLength = toIndex - fromIndex;
         int numberOfGroups = arrayLength / 5 + 
                             (arrayLength % 5 != 0 ? 1 : 0);
         
         E[] outputArray = Arrays.copyOfRange(array, 0, numberOfGroups);
         
-        int groupStartIndex  = 0;
+        int groupStartIndex  = fromIndex;
         int outputArrayIndex = 0;
         
         for (int groupIndex = 0; groupIndex < numberOfGroups; groupIndex++) {
             int groupEndIndex = 
-                    Math.min(groupStartIndex + GROUP_LENGTH,
-                             arrayLength);
+                    Math.min(groupStartIndex + GROUP_LENGTH, toIndex);
             
             Arrays.sort(array, groupStartIndex, groupEndIndex);
             int groupLength = groupEndIndex - groupStartIndex;
@@ -74,17 +79,5 @@ implements Selector<E> {
         }
         
         return outputArray;
-    }
-    
-    private static void checkK(int arrayLength, int k) {
-        if (k < 0) {
-            throw new IllegalArgumentException("'k' is negative: " + k);
-        }
-        
-        if (k >= arrayLength) {
-            throw new IllegalArgumentException(
-                    "'k' is too large: " + k + 
-                    "Must be at most " + (arrayLength - 1) + ".");
-        }
     }
 }
