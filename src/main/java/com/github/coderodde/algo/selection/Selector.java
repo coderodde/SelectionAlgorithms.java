@@ -8,5 +8,7 @@ package com.github.coderodde.algo.selection;
  */
 public interface Selector<E extends Comparable<? super E>> {
 
+    
     E select(E[] array, int k);
+    E select(E[] array, int k, int fromIndex, int toIndex);
 }

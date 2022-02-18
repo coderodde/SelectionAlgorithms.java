@@ -1,10 +1,11 @@
 package com.github.coderodde.algo.selection.impl;
 
 import com.github.coderodde.algo.selection.Selector;
+import static com.github.coderodde.algo.selection.impl.Support.checkArray;
 import static com.github.coderodde.algo.selection.impl.Support.checkK;
+import static com.github.coderodde.algo.selection.impl.Support.checkRangeIndices;
 import static com.github.coderodde.algo.selection.impl.Support.partition;
 import java.util.Arrays;
-import java.util.Objects;
 
 /**
  * This class provides a method for {@code k}th order statistics in worst case
@@ -24,15 +25,17 @@ implements Selector<E> {
      * {@inheritDoc }
      */
     @Override
-    public E select(E[] array, int k) {
-        Objects.requireNonNull(array, "The input array is null.");
-        
-        if (array.length == 0) {
-            throw new IllegalArgumentException("The input array is empty.");
-        }
-        
+    public E select(E[] array, int k, int fromIndex, int toIndex) {
+        checkArray(array);
         checkK(array.length, k);
+        checkRangeIndices(fromIndex, toIndex);
         return selectImpl(array, k, 0, array.length);
+    }
+    
+    @Override
+    public E select(E[] array, int k) {
+        checkArray(array);
+        return select(array, k, 0, array.length);
     }
     
     private static <E extends Comparable<? super E>> E 

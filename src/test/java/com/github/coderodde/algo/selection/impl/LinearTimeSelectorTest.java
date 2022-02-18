@@ -16,13 +16,13 @@ public class LinearTimeSelectorTest {
     }
     
     @Test
-    public void testSelect2() {
-        assertEquals(Integer.valueOf(2), selector.select(array, 1));
+    public void testSelect1() {
+        assertEquals(Integer.valueOf(1), selector.select(array, 0));
     }
     
     @Test
-    public void testSelect1() {
-        assertEquals(Integer.valueOf(1), selector.select(array, 0));
+    public void testSelect2() {
+        assertEquals(Integer.valueOf(2), selector.select(array, 1));
     }
     
     @Test
@@ -38,5 +38,24 @@ public class LinearTimeSelectorTest {
     @Test
     public void testSelect5() {
         assertEquals(Integer.valueOf(5), selector.select(array, 4));
+    }
+    
+    @Test
+    public void testEqualElements() {
+        array = new Integer[]{ 2, 2, 2, 2 };
+        
+        for (int i = 0; i <= 3; i++) {
+            assertEquals(Integer.valueOf(2), selector.select(array, i));
+        }
+    }
+    
+    @Test
+    public void bruteForceTestUniqueElements() {
+        
+    }
+    
+    @Test
+    public void bruteForceTestSomeDuplicateElements() {
+        
     }
 }

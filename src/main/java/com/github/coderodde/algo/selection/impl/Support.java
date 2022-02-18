@@ -42,6 +42,10 @@ public final class Support {
     
     static <E> void checkArray(E[] array) {
         Objects.requireNonNull(array, "The input array is null.");
+        
+        if (array.length == 0) {
+            throw new IllegalArgumentException("The input array is empty.");
+        }
     }
     
     static void checkK(int arrayLength, int k) {
@@ -53,6 +57,27 @@ public final class Support {
             throw new IllegalArgumentException(
                     "'k' is too large: " + k + 
                     "Must be at most " + (arrayLength - 1) + ".");
+        }
+    }
+    
+    static void checkRangeIndices(int fromIndex, int toIndex) {
+        if (fromIndex < 0) {
+            throw new IllegalArgumentException(
+                    "frontIndex is negative: " 
+                            + fromIndex
+                            + ". Must be at least 0.");
+        }
+        
+        if (toIndex < 0) {
+            throw new IllegalArgumentException(
+                    "toIndex is negative: " 
+                            + toIndex
+                            + ". Must be at least 0.");
+        }
+        
+        if (fromIndex > toIndex) {
+            throw new IllegalArgumentException(
+                    "fromIndex(" + fromIndex + ") > toIndex(" + toIndex + ")");
         }
     }
 }
