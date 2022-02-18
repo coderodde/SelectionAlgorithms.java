@@ -7,16 +7,22 @@ import java.util.Arrays;
 import java.util.Objects;
 
 /**
+ * This class provides a method for {@code k}th order statistics in worst case
+ * linear time.
  * 
  * @author Rodion "rodde" Efremov
- * @version 1.6 ()
- * @since 1.6 ()
+ * @param <E> the element type.
+ * @version 1.6 (Feb 18, 2022)
+ * @since 1.6 (Feb 18, 2022)
  */
 public class LinearTimeSelector<E extends Comparable<? super E>> 
 implements Selector<E> {
     
     private static final int GROUP_LENGTH = 5;
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public E select(E[] array, int k) {
         Objects.requireNonNull(array, "The input array is null.");
@@ -32,29 +38,33 @@ implements Selector<E> {
     private static <E extends Comparable<? super E>> E 
         selectImpl(E[] array, int i, int fromIndex, int toIndex) {
            
-        if (array.length == 1) {
-            return array[0];
+        int subarrayLength = toIndex - fromIndex;
+            
+        if (subarrayLength == 1) {
+            return array[fromIndex];
         }
         
         E[] medians = getGroupMedians(array, 
                                       fromIndex,
                                       toIndex);
         
+        int mediansLength =  medians.length;
+        int medianIndex   = (mediansLength - 1) / 2;
+        
         E x = selectImpl(medians, 
-                         i,
-                         fromIndex, 
-                         toIndex);
+                         medianIndex,
+                         0, 
+                         medians.length);
         
         int k = partition(array, x);
         
-        if (i == k) {
+        if (fromIndex + i == k - 1) {
             return x;
         }
         
-        return i < k ? selectImpl(array, i, fromIndex, fromIndex + k) : 
-                       selectImpl(array, i - k, toIndex - k, toIndex);
+        return fromIndex + i < k ? selectImpl(array, i, fromIndex, k) : 
+                                   selectImpl(array, i - k, k, toIndex);
     }
-    
     
     private static <E extends Comparable<? super E>>
         E[] getGroupMedians(E[] array, int fromIndex, int toIndex) {
@@ -75,7 +85,10 @@ implements Selector<E> {
             Arrays.sort(array, groupStartIndex, groupEndIndex);
             int groupLength = groupEndIndex - groupStartIndex;
             int medianIndex = (groupLength - 1) / 2;
-            outputArray[outputArrayIndex++] = array[medianIndex];
+            
+            outputArray[outputArrayIndex++] = array[groupStartIndex +
+                                                    medianIndex];
+            groupStartIndex = groupEndIndex;
         }
         
         return outputArray;

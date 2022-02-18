@@ -1,5 +1,7 @@
 package com.github.coderodde.algo.selection.impl;
 
+import java.util.Objects;
+
 /**
  * This class provides common methods for dealing with the order statistics 
  * algorithms.
@@ -18,12 +20,13 @@ public final class Support {
      * @return the number of array elements no larger than the pivot.
      */
     static <E extends Comparable<? super E>> int partition(E[] array,
-                                                                  E pivot) {
+                                                           E pivot) {
         int i = -1;
         
-        for (int j = 0; j < array.length - 1; j++) {
+        for (int j = 0; j < array.length - 1; ++j) {
             if (array[j].compareTo(pivot) <= 0) {
-                swap(array, ++i, j);
+                ++i;
+                swap(array, i, j);
             }
         }
         
@@ -35,6 +38,10 @@ public final class Support {
         E tmp = array[index1];
         array[index1] = array[index2];
         array[index2] = tmp;
+    }
+    
+    static <E> void checkArray(E[] array) {
+        Objects.requireNonNull(array, "The input array is null.");
     }
     
     static void checkK(int arrayLength, int k) {
