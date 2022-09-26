@@ -1,10 +1,8 @@
-package com.github.coderodde.algo.selection.impl;
+package com.github.coderodde.algo.selection;
 
-import com.github.coderodde.algo.selection.Selector;
-import static com.github.coderodde.algo.selection.impl.Support.checkArray;
-import static com.github.coderodde.algo.selection.impl.Support.checkK;
-import static com.github.coderodde.algo.selection.impl.Support.checkRangeIndices;
-import static com.github.coderodde.algo.selection.impl.Support.partition;
+import static com.github.coderodde.algo.selection.Support.checkArray;
+import static com.github.coderodde.algo.selection.Support.checkK;
+import static com.github.coderodde.algo.selection.Support.checkRangeIndices;
 import java.util.Arrays;
 
 /**
@@ -16,7 +14,7 @@ import java.util.Arrays;
  * @version 1.6 (Feb 18, 2022)
  * @since 1.6 (Feb 18, 2022)
  */
-public class LinearTimeSelector<E extends Comparable<? super E>> 
+public final class LinearTimeSelector<E extends Comparable<? super E>> 
 implements Selector<E> {
     
     private static final int GROUP_LENGTH = 5;
@@ -29,9 +27,12 @@ implements Selector<E> {
         checkArray(array);
         checkK(array.length, k);
         checkRangeIndices(fromIndex, toIndex);
-        return selectImpl(array, k, 0, array.length);
+        return selectImpl(array, k, fromIndex, toIndex);
     }
     
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public E select(E[] array, int k) {
         checkArray(array);
@@ -39,34 +40,60 @@ implements Selector<E> {
     }
     
     private static <E extends Comparable<? super E>> E 
-        selectImpl(E[] array, int i, int fromIndex, int toIndex) {
-           
-        int subarrayLength = toIndex - fromIndex;
-            
-        if (subarrayLength == 1) {
-            return array[fromIndex];
-        }
-        
+        selectImpl(E[] array, int index, int fromIndex, int toIndex) {
         E[] medians = getGroupMedians(array, 
                                       fromIndex,
                                       toIndex);
         
-        int mediansLength =  medians.length;
-        int medianIndex   = (mediansLength - 1) / 2;
+        E pivot;
         
-        E x = selectImpl(medians, 
-                         medianIndex,
-                         0, 
-                         medians.length);
-        
-        int k = partition(array, x);
-        
-        if (fromIndex + i == k - 1) {
-            return x;
+        if (medians.length <= 5) {
+            pivot = medians[medians.length / 2];
+        } else {
+            pivot = selectImpl(medians, medians.length / 2, 0, medians.length);
         }
         
-        return fromIndex + i < k ? selectImpl(array, i, fromIndex, k) : 
-                                   selectImpl(array, i - k, k, toIndex);
+        int leftArrayLength = 0;
+        int rightArrayLength = 0;
+        
+        for (int i = fromIndex; i < toIndex; i++) {
+            E datum = array[i];
+            
+            if (datum.compareTo(pivot) < 0) {
+                leftArrayLength++;
+            } else if (datum.compareTo(pivot) > 0) {
+                rightArrayLength++;
+            }
+        }
+        
+        E[] leftArray = Arrays.copyOf(array, leftArrayLength);
+        E[] rightArray = Arrays.copyOf(array, rightArrayLength);
+       
+        for (int i = fromIndex, outputIndex = 0; i < toIndex; i++) {
+            E datum = array[i];
+            
+            if (datum.compareTo(pivot) < 0) {
+                leftArray[outputIndex++] = datum;
+            }
+        }
+        
+        for (int i = fromIndex, outputIndex = 0; i < toIndex; i++) {
+            E datum = array[i];
+            
+            if (datum.compareTo(pivot) > 0) {
+                rightArray[outputIndex++] = datum;
+            }
+        }
+        
+        int k = leftArrayLength;
+        
+        if (index < k) {
+            return selectImpl(leftArray, index, 0, leftArrayLength);
+        } else if (index > k) {
+            return selectImpl(rightArray, index - k - 1, 0, rightArrayLength);
+        } else {
+            return pivot;
+        }
     }
     
     private static <E extends Comparable<? super E>>
