@@ -1,6 +1,7 @@
 package com.github.coderodde.algo.selection.benchmark;
 
 import com.github.coderodde.algo.selection.LinearTimeSelector;
+import com.github.coderodde.algo.selection.RandomizedSelector;
 import com.github.coderodde.algo.selection.Selector;
 import com.github.coderodde.algo.selection.SortingSelector;
 import com.github.coderodde.algo.selection.Support;
@@ -38,9 +39,11 @@ public final class SelectorBenchmark {
                         MAXIMUM_VALUE);
         
         Integer[] array2 = array1.clone();
+        Integer[] array3 = array1.clone();
         
         Selector<Integer> selector1 = new SortingSelector<>();
         Selector<Integer> selector2 = new LinearTimeSelector<>();
+        Selector<Integer> selector3 = new RandomizedSelector<>();
         
         List<Integer> results1 = warmup(selector1, 
                                         array1,
@@ -52,14 +55,20 @@ public final class SelectorBenchmark {
                                         FROM_INDEX, 
                                         TO_INDEX);
         
-        if (results1.equals(results2)) {
+        List<Integer> results3 = warmup(selector3, 
+                                        array3, 
+                                        FROM_INDEX, 
+                                        TO_INDEX);
+        
+        if (results1.equals(results2) && results2.equals(results3)) {
             System.out.println("Algorithms agreed on warmup.");
         }
         
         results1 = benchmark(selector1, array1, FROM_INDEX, TO_INDEX);
         results2 = benchmark(selector2, array2, FROM_INDEX, TO_INDEX);
+        results3 = benchmark(selector3, array3, FROM_INDEX, TO_INDEX);
         
-        if (results1.equals(results2)) {
+        if (results1.equals(results2) && results2.equals(results3)) {
             System.out.println("Algorithms agreed on benchmark.");
         }
     }

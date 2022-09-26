@@ -8,7 +8,8 @@ package com.github.coderodde.algo.selection;
  * @version 1.6 (Sep 25, 2022)
  * @since 1.6 (Sep 25, 2022)
  */
-public sealed interface Selector<E extends Comparable<? super E>> permits LinearTimeSelector, SortingSelector {
+public sealed interface Selector<E extends Comparable<? super E>> 
+        permits LinearTimeSelector, SortingSelector, RandomizedSelector {
     
     E select(E[] array, int k);
     E select(E[] array, int k, int fromIndex, int toIndex);
