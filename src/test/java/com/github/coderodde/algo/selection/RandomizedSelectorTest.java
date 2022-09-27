@@ -2,6 +2,7 @@ package com.github.coderodde.algo.selection;
 
 import static com.github.coderodde.algo.selection.Support.getArray;
 import java.util.Random;
+import java.util.Arrays;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -16,6 +17,15 @@ public class RandomizedSelectorTest {
     
     private final Selector<Integer> selector = new RandomizedSelector<>();
     private Integer[] array ;
+    
+    @Test
+    public void example1() {
+        Integer[] array = { 2, 8, 7, 1, 3, 5, 6, 4 };
+        RandomizedSelector.partition(array, 0, array.length);
+        assertTrue(Arrays.equals(array, new Integer[] { 
+            2, 1, 3, 4, 7, 5, 6, 8
+        }));
+    }
     
     @Before
     public void methodInit() {

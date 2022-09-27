@@ -9,9 +9,9 @@ import java.util.Random;
  * This class implements a randomized selector relying on the ideas of 
  * quicksort.
  * 
+ * @param <E> the array component type. Must be {@link Comparable}.
  * @author Rodion "rodde" Efremov
  * @version 1.6 (Sep 26, 2022)
- * @param <E>
  * @since 1.6 (Sep 26, 2022)
  */
 public final class RandomizedSelector<E extends Comparable<? super E>> implements Selector<E> {
@@ -51,14 +51,14 @@ public final class RandomizedSelector<E extends Comparable<? super E>> implement
         
         int q = randomizedPartition(array, fromIndex, toIndex, random);
         
-        int k = q - fromIndex + 1;
+        int k = q - fromIndex;
         
         if (index == k) {
             return array[q];
         } else if (index < k) {
-            return selectImpl(array, index, fromIndex, q - 1, random);
+            return selectImpl(array, index, fromIndex, q, random);
         } else {
-            return selectImpl(array, index - k, q + 1, toIndex, random);
+            return selectImpl(array, index - k, q, toIndex, random);
         }
     }
     
@@ -73,7 +73,7 @@ public final class RandomizedSelector<E extends Comparable<? super E>> implement
         return partition(array, fromIndex, toIndex);
     }
     
-    private static <E extends Comparable<? super E>> 
+    static <E extends Comparable<? super E>> 
         int partition(E[] array, int fromIndex, int toIndex) {
         E x = array[toIndex - 1];
         int i = fromIndex - 1;
