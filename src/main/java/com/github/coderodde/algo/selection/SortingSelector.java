@@ -23,7 +23,7 @@ public final class SortingSelector<E extends Comparable<? super E>>
         Arrays.sort(array, fromIndex, toIndex);
         return array[k + fromIndex];
     }
-    
+
     @Override
     public E select(E[] array, int k) {
         checkArray(array);

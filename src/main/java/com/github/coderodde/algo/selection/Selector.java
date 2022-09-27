@@ -10,7 +10,7 @@ package com.github.coderodde.algo.selection;
  */
 public sealed interface Selector<E extends Comparable<? super E>> 
         permits LinearTimeSelector, SortingSelector, RandomizedSelector {
-    
+
     E select(E[] array, int k);
     E select(E[] array, int k, int fromIndex, int toIndex);
 }
